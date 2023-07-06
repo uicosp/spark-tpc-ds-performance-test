@@ -206,7 +206,11 @@ function run_tpcds_common {
   output_dir=$TPCDS_WORK_DIR
   cp ${TPCDS_GENQUERIES_DIR}/*.sql $TPCDS_WORK_DIR
 
-  ${TPCDS_ROOT_DIR}/bin/runqueries.sh $SPARK_HOME $TPCDS_WORK_DIR  > ${TPCDS_WORK_DIR}/runqueries.out 2>&1 &
+  if [ "$USE_BEELINE" == "true" ]; then
+    ${TPCDS_ROOT_DIR}/bin/runqueries_beeline.sh $BEELINE $TPCDS_WORK_DIR $TPCDS_DBNAME $SPARK_HISTORY_SERVER > ${TPCDS_WORK_DIR}/runqueries.out 2>&1 &
+  else
+    ${TPCDS_ROOT_DIR}/bin/runqueries.sh $SPARK_HOME $TPCDS_WORK_DIR  > ${TPCDS_WORK_DIR}/runqueries.out 2>&1 &
+  fi
   script_pid=$!
   trap 'handle_shutdown $$ $output_dir; exit' SIGHUP SIGQUIT SIGINT SIGTERM
   cont=1
