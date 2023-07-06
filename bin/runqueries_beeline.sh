@@ -1,5 +1,7 @@
 #!/bin/bash
 
+current_dir=$(dirname "$0")
+
 BEELINE=$1
 OUTPUT_DIR=$2
 TPCDS_DBNAME=$3
@@ -26,9 +28,9 @@ do
   $beeline -f ${OUTPUT_DIR}/query${num}.sql > ${OUTPUT_DIR}/query${num}.res 2>&1
   app_id_row=`cat ${OUTPUT_DIR}/query${num}.res | grep 'application ID' -m 1`
   app_id=`echo $app_id_row | tr -s " " " " | cut -d " " -f3`
-  echo "app_id ="$app_id
-  result=`python spark_metrics.py $SPARK_HISTORY_SERVER $app_id`
-  lines=`cat ${OUTPUT_DIR}/query${num}.res | grep "row selected"`
+  echo "app_id="$app_id
+  result=`python ${current_dir}/spark_metrics.py $SPARK_HISTORY_SERVER $app_id`
+  lines=`cat ${OUTPUT_DIR}/query${num}.res | grep "rows selected"`
   echo "$lines" | while read -r line;
   do
     time=`echo $result | tr -s " " " " | cut -d " " -f1`

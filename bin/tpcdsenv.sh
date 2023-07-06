@@ -20,7 +20,7 @@ export TPCDS_DBNAME=
 export TPCDS_WORK_DIR=
 
 export ADDITION_SPARK_OPTIONS=
-
+export SKIP_TABLE_CHECK=false
 #######################################################################
 # Use beeline to submit benchmark sql.
 # By default, use `spark-sql` to submit benchmark tests.
