@@ -4,6 +4,7 @@ BEELINE=$1
 OUTPUT_DIR=$2
 TPCDS_DBNAME=$3
 SPARK_HISTORY_SERVER=$4
+CONTINUE_I=$5
 
 beeline=${BEELINE/\/default\;/\/${TPCDS_DBNAME}\;}
 
@@ -12,10 +13,15 @@ divider=$divider$divider$divider
 header="\n %-10s %11s %11s %11s %15s\n"
 format=" %-10s %11.2f %11.2f %11.2f %10s %4d\n"
 width=63
-printf "$header" "Query" "Time(secs)" "Read(secs)" "Write(secs)" "Rows returned" > ${OUTPUT_DIR}/run_summary.txt
-printf "%$width.${width}s\n" "$divider" >> ${OUTPUT_DIR}/run_summary.txt
+if [ -z "$CONTINUE_I" ]; then
+  printf "$header" "Query" "Time(secs)" "Read(secs)" "Write(secs)" "Rows returned" > ${OUTPUT_DIR}/run_summary.txt
+  printf "%$width.${width}s\n" "$divider" >> ${OUTPUT_DIR}/run_summary.txt
+fi
 for i in `cat ${OUTPUT_DIR}/runlist.txt`;
 do
+  if [ -n "$CONTINUE_I" ] && [ "$i" -lt "$CONTINUE_I" ]; then
+    continue
+  fi
   num=`printf "%02d\n" $i`
   $beeline -f ${OUTPUT_DIR}/query${num}.sql > ${OUTPUT_DIR}/query${num}.res 2>&1
   app_id_row=`cat ${OUTPUT_DIR}/query${num}.res | grep 'application ID' -m 1`

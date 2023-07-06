@@ -203,11 +203,12 @@ function platformCheck {
 }
 
 function run_tpcds_common {
+  continue_i=$1
   output_dir=$TPCDS_WORK_DIR
   cp ${TPCDS_GENQUERIES_DIR}/*.sql $TPCDS_WORK_DIR
 
   if [ "$USE_BEELINE" == "true" ]; then
-    ${TPCDS_ROOT_DIR}/bin/runqueries_beeline.sh $BEELINE $TPCDS_WORK_DIR $TPCDS_DBNAME $SPARK_HISTORY_SERVER > ${TPCDS_WORK_DIR}/runqueries.out 2>&1 &
+    ${TPCDS_ROOT_DIR}/bin/runqueries_beeline.sh $BEELINE $TPCDS_WORK_DIR $TPCDS_DBNAME $SPARK_HISTORY_SERVER $continue_i > ${TPCDS_WORK_DIR}/runqueries.out 2>&1 &
   else
     ${TPCDS_ROOT_DIR}/bin/runqueries.sh $SPARK_HOME $TPCDS_WORK_DIR  > ${TPCDS_WORK_DIR}/runqueries.out 2>&1 &
   fi
@@ -311,6 +312,12 @@ function run_tpcds_queries {
   fi
 }
 
+function continue_run {
+  echo "Enter the starting query id to continue run, followed by [ENTER]:"
+  read continue_i
+  run_tpcds_common continue_i
+}
+
 function create_spark_tables {
   check_environment
   output_dir=$TPCDS_WORK_DIR
@@ -402,8 +409,9 @@ SETUP
 RUN
 (2) Run a subset of TPC-DS queries
 (3) Run All (99) TPC-DS Queries
+(4) Continue
 CLEANUP
-(4) Cleanup
+(5) Cleanup
 (Q) Quit
 ----------------------------------------------
 EOF
@@ -414,7 +422,8 @@ EOF
       "1")  create_spark_tables ;;
       "2")  run_subset_tpcds_queries ;;
       "3")  run_tpcds_queries ;;
-      "4")  cleanup_all ;;
+      "4")  continue_run ;;
+      "5")  cleanup_all ;;
       "Q")  exit                      ;;
       "q")  exit                      ;;
        * )  echo "invalid option"     ;;
