@@ -17,8 +17,6 @@ def retry(url, fn=None):
             if fn(data):
                 return data
             else:
-                print("not ok")
-                print(data['attempts'][0]['completed'])
                 time.sleep(3)
                 count = count - 1
         else:
