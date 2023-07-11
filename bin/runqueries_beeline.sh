@@ -30,7 +30,7 @@ do
   app_id=`echo $app_id_row | tr -s " " " " | cut -d " " -f3`
   echo "query${num} app_id=${app_id}"
   result=`python ${current_dir}/spark_metrics.py $SPARK_HISTORY_SERVER $app_id`
-  lines=`cat ${OUTPUT_DIR}/query${num}.res | grep "rows selected"`
+  lines=`cat ${OUTPUT_DIR}/query${num}.res | grep -E "row(s)? selected"`
   echo "$lines" | while read -r line;
   do
     time=`echo $result | tr -s " " " " | cut -d " " -f1`
