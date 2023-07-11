@@ -37,6 +37,7 @@ do
     shuffle_read_time=`echo $result | tr -s " " " " | cut -d " " -f2`
     shuffle_write_time=`echo $result | tr -s " " " " | cut -d " " -f3`
     num_rows=`echo $line | tr -s " " " " | cut -d " " -f1`
+    num_rows=${num_rows//,/} # remove ","
     printf "$format" \
        query${num} \
        $time \
