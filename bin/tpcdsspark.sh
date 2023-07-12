@@ -217,7 +217,9 @@ function run_tpcds_common {
     ${TPCDS_ROOT_DIR}/bin/runqueries.sh $SPARK_HOME $TPCDS_WORK_DIR  > ${TPCDS_WORK_DIR}/runqueries.out 2>&1 &
   fi
   script_pid=$!
-  trap 'handle_shutdown $$ $output_dir; exit' SIGHUP SIGQUIT SIGINT SIGTERM
+  if [ "$CLEAN_SHUTDOWN" == "true" ]; then
+    trap 'handle_shutdown $$ $output_dir; exit' SIGHUP SIGQUIT SIGINT SIGTERM
+  fi
   cont=1
   error_code=0
   while [  $cont -gt 0 ]; do
@@ -403,6 +405,10 @@ main() {
   set_env
   if [ "$1" -eq 3 ]; then
       run_tpcds_queries
+      exit
+  fi
+  if [ "$1" -eq 4 ]; then
+      run_tpcds_common $2
       exit
   fi
   while :
