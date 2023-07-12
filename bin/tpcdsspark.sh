@@ -252,7 +252,7 @@ function run_subset_tpcds_queries {
   output_dir=$TPCDS_WORK_DIR
   cleanup $TPCDS_WORK_DIR
   if [ -n "$1" ]; then
-    run_list = "$1"
+    run_list="$1"
   else
     echo "Enter a comma separated list of queries to run (ex: 1, 2), followed by [ENTER]:"
     read run_list
