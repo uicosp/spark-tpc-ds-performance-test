@@ -401,6 +401,10 @@ set_env() {
 
 main() {
   set_env
+  if [ "$1" -eq 3 ]; then
+      run_tpcds_queries
+      exit
+  fi
   while :
   do
       clear
@@ -437,4 +441,4 @@ EOF
   done
 }
 
-[[ "${BASH_SOURCE[0]}" == "${0}" ]] && main
+[[ "${BASH_SOURCE[0]}" == "${0}" ]] && main $@
