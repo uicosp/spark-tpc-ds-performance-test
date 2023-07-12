@@ -251,8 +251,12 @@ function run_tpcds_common {
 function run_subset_tpcds_queries {
   output_dir=$TPCDS_WORK_DIR
   cleanup $TPCDS_WORK_DIR
-  echo "Enter a comma separated list of queries to run (ex: 1, 2), followed by [ENTER]:"
-  read run_list
+  if [ -z "$1" ]; then
+    run_list = "$1"
+  else
+    echo "Enter a comma separated list of queries to run (ex: 1, 2), followed by [ENTER]:"
+    read run_list
+  fi
   if [ -z "$run_list" ]; then
     logError "Empty query list is not allowed. Please supply a comma separated query list"
     return 1
@@ -403,6 +407,10 @@ set_env() {
 
 main() {
   set_env
+  if [ "$1" -eq 2 ]; then
+      run_subset_tpcds_queries $2
+      exit
+  fi
   if [ "$1" -eq 3 ]; then
       run_tpcds_queries
       exit
