@@ -31,10 +31,14 @@ def process(history_server, application_id):
     duration = round(job['attempts'][0]['duration'] / 1000, 2)
     fetch_times = round(reduce(lambda x, y: x + y, [stage['shuffleFetchWaitTime'] for stage in stages]) / 1000, 2)
     write_times = round(reduce(lambda x, y: x + y, [stage['shuffleWriteTime'] / 1e6 for stage in stages]) / 1000, 2)
+    read_gb = round(reduce(lambda x, y: x + y, [stage['shuffleReadBytes'] for stage in stages]) / (1024 * 1024 * 1024), 2)
+    write_gb = round(reduce(lambda x, y: x + y, [stage['shuffleWriteBytes'] for stage in stages]) / (1024 * 1024 * 1024), 2)
     # compatible with python2 and python3
     print(duration)
     print(fetch_times)
     print(write_times)
+    print(read_gb)
+    print(write_gb)
 
 
 def main():

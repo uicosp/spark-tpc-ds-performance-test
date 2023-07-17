@@ -12,11 +12,11 @@ beeline=${BEELINE/\/default\;/\/${TPCDS_DBNAME}\;}
 
 divider===============================
 divider=$divider$divider$divider
-header="\n %-10s %11s %11s %11s %15s\n"
-format=" %-10s %11.2f %11.2f %11.2f %10s %4d\n"
+header="\n %-10s %11s %11s %11s %11s %11s %15s\n"
+format=" %-10s %11.2f %11.2f %11.2f %11.2f %11.2f %10s %4d\n"
 width=63
 if [ -z "$CONTINUE_I" ]; then
-  printf "$header" "Query" "Time(secs)" "Read(secs)" "Write(secs)" "Rows returned" > ${OUTPUT_DIR}/run_summary.txt
+  printf "$header" "Query" "Time(secs)" "Read(secs)" "Write(secs)" "Read(GB)" "Write(GB)" "Rows returned" > ${OUTPUT_DIR}/run_summary.txt
   printf "%$width.${width}s\n" "$divider" >> ${OUTPUT_DIR}/run_summary.txt
 fi
 for i in `cat ${OUTPUT_DIR}/runlist.txt`;
@@ -36,6 +36,8 @@ do
     time=`echo $result | tr -s " " " " | cut -d " " -f1`
     shuffle_read_time=`echo $result | tr -s " " " " | cut -d " " -f2`
     shuffle_write_time=`echo $result | tr -s " " " " | cut -d " " -f3`
+    shuffle_read_gb=`echo $result | tr -s " " " " | cut -d " " -f4`
+    shuffle_write_gb=`echo $result | tr -s " " " " | cut -d " " -f5`
     num_rows=`echo $line | tr -s " " " " | cut -d " " -f1`
     num_rows=${num_rows//,/} # remove ","
     printf "$format" \
@@ -43,6 +45,8 @@ do
        $time \
        $shuffle_read_time \
        $shuffle_write_time \
+       $shuffle_read_gb \
+       $shuffle_write_gb \
        "" \
        $num_rows >> ${OUTPUT_DIR}/run_summary.txt
   done
