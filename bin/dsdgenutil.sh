@@ -29,8 +29,8 @@ function generate() {
 }
 
 function main() {
-  word_dir=$1
-  mode=$2
+  mode=$1
+  word_dir=$2
   shift
   shift
   cd $word_dir || exit
