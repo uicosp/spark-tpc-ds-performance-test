@@ -7,8 +7,10 @@ function move() {
     echo "$dats" | while read -r line;
     do
       file_name=$(echo $line | tr -s " " " " | cut -d " " -f9)
-      dir_name=${file_name%.dat}
-      mkdir $dir_name
+      dir_name=$(echo $file_name | sed 's/[0-9]*//g;s/_*.dat//g')
+      if [ ! -d "$dir_name" ]; then
+        mkdir $dir_name
+      fi
       mv $file_name $dir_name
       echo "mv ${file_name} to ${dir_name}"
     done
