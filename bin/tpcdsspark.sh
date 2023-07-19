@@ -329,12 +329,17 @@ function continue_run {
 }
 
 function create_spark_tables {
+  table_name=$1
   check_environment
   output_dir=$TPCDS_WORK_DIR
   cleanup $TPCDS_WORK_DIR
   trap 'handle_shutdown $$ $output_dir; exit' SIGHUP SIGQUIT SIGINT SIGTERM
   echo "USE ${TPCDS_DBNAME};" >> ${output_dir}/create_tables_temp.sql
-  for i in `ls ${TPCDS_ROOT_DIR}/src/ddl/individual/*.sql`
+  pattern='*'
+  if [ -n "$table_name" ]; then
+    pattern=$table_name
+  fi
+  for i in `ls ${TPCDS_ROOT_DIR}/src/ddl/individual/${pattern}.sql`
   do
      cat $i >> ${output_dir}/create_tables_temp.sql
      echo "" >> ${output_dir}/create_tables_temp.sql
@@ -407,6 +412,10 @@ set_env() {
 
 main() {
   set_env
+  if [ "$1" -eq 1 ]; then
+      create_spark_tables $2
+      exit
+  fi
   if [ "$1" -eq 2 ]; then
       run_subset_tpcds_queries $2
       exit
