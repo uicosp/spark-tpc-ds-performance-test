@@ -6,17 +6,18 @@ BEELINE=$1
 OUTPUT_DIR=$2
 TPCDS_DBNAME=$3
 SPARK_HISTORY_SERVER=$4
-CONTINUE_I=$5
+RM_HTTP_ADDRESS=$5
+CONTINUE_I=$6
 
 beeline=${BEELINE/\/default\;/\/${TPCDS_DBNAME}\;}
 
 divider===============================
-divider=$divider$divider$divider$divider
-header="\n %-10s %11s %11s %11s %11s %11s %15s\n"
-format=" %-10s %11.2f %11.2f %11.2f %11.2f %11.2f %10s %4d\n"
-width=87
+divider=$divider$divider$divider$divider$divider
+header="\n %-10s %11s %11s %11s %11s %11s %15s %15s %15s\n"
+format=" %-10s %11.2f %11.2f %11.2f %11.2f %11.2f %15d %15d %15d\n"
+width=119
 if [ -z "$CONTINUE_I" ]; then
-  printf "$header" "Query" "Time(secs)" "Read(secs)" "Write(secs)" "Read(GB)" "Write(GB)" "Rows returned" > ${OUTPUT_DIR}/run_summary.txt
+  printf "$header" "Query" "Time(secs)" "Read(secs)" "Write(secs)" "Read(GB)" "Write(GB)" "Memory" "Vcore" "Rows returned"> ${OUTPUT_DIR}/run_summary.txt
   printf "%$width.${width}s\n" "$divider" >> ${OUTPUT_DIR}/run_summary.txt
 fi
 for i in `cat ${OUTPUT_DIR}/runlist.txt`;
@@ -29,7 +30,7 @@ do
   app_id_row=`cat ${OUTPUT_DIR}/query${num}.res | grep 'application ID' -m 1`
   app_id=`echo $app_id_row | tr -s " " " " | cut -d " " -f3`
   echo "query${num} app_id=${app_id}"
-  result=`python ${current_dir}/spark_metrics.py $SPARK_HISTORY_SERVER $app_id`
+  result=`python ${current_dir}/spark_metrics.py $SPARK_HISTORY_SERVER $RM_HTTP_ADDRESS $app_id`
   lines=`cat ${OUTPUT_DIR}/query${num}.res | grep -E "row(s)? selected"`
   echo "$lines" | while read -r line;
   do
@@ -38,6 +39,8 @@ do
     shuffle_write_time=`echo $result | tr -s " " " " | cut -d " " -f3`
     shuffle_read_gb=`echo $result | tr -s " " " " | cut -d " " -f4`
     shuffle_write_gb=`echo $result | tr -s " " " " | cut -d " " -f5`
+    memory=`echo $result | tr -s " " " " | cut -d " " -f6`
+    vcore=`echo $result | tr -s " " " " | cut -d " " -f7`
     num_rows=`echo $line | tr -s " " " " | cut -d " " -f1`
     num_rows=${num_rows//,/} # remove ","
     printf "$format" \
@@ -47,7 +50,8 @@ do
        $shuffle_write_time \
        $shuffle_read_gb \
        $shuffle_write_gb \
-       "" \
+       $memory \
+       $vcore \
        $num_rows >> ${OUTPUT_DIR}/run_summary.txt
   done
 

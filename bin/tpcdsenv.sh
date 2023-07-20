@@ -32,3 +32,4 @@ export CLEAN_SHUTDOWN=true
 export USE_BEELINE=false
 export BEELINE=
 export SPARK_HISTORY_SERVER=
+export RM_HTTP_ADDRESS=

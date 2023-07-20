@@ -212,7 +212,7 @@ function run_tpcds_common {
   cp ${TPCDS_GENQUERIES_DIR}/*.sql $TPCDS_WORK_DIR
 
   if [ "$USE_BEELINE" == "true" ]; then
-    ${TPCDS_ROOT_DIR}/bin/runqueries_beeline.sh "$BEELINE" $TPCDS_WORK_DIR $TPCDS_DBNAME $SPARK_HISTORY_SERVER $continue_i > ${TPCDS_WORK_DIR}/runqueries.out 2>&1 &
+    ${TPCDS_ROOT_DIR}/bin/runqueries_beeline.sh "$BEELINE" $TPCDS_WORK_DIR $TPCDS_DBNAME $SPARK_HISTORY_SERVER $RM_HTTP_ADDRESS $continue_i > ${TPCDS_WORK_DIR}/runqueries.out 2>&1 &
   else
     ${TPCDS_ROOT_DIR}/bin/runqueries.sh $SPARK_HOME $TPCDS_WORK_DIR  > ${TPCDS_WORK_DIR}/runqueries.out 2>&1 &
   fi
