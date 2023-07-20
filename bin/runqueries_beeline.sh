@@ -13,11 +13,11 @@ beeline=${BEELINE/\/default\;/\/${TPCDS_DBNAME}\;}
 
 divider===============================
 divider=$divider$divider$divider$divider$divider
-header="\n %-10s %11s %11s %11s %11s %11s %15s %15s %15s\n"
-format=" %-10s %11.2f %11.2f %11.2f %11.2f %11.2f %15d %15d %15d\n"
-width=119
+header="\n %-10s %11s %11s %11s %11s %11s %12s %10s %10s\n"
+format=" %-10s %11.2f %11.2f %11.2f %11.2f %11.2f %12d %10d %10d\n"
+width=106
 if [ -z "$CONTINUE_I" ]; then
-  printf "$header" "Query" "Time(secs)" "Read(secs)" "Write(secs)" "Read(GB)" "Write(GB)" "Memory" "Vcore" "Rows returned"> ${OUTPUT_DIR}/run_summary.txt
+  printf "$header" "Query" "Time(secs)" "Read(secs)" "Write(secs)" "Read(GB)" "Write(GB)" "Memory" "Vcore" "Rows"> ${OUTPUT_DIR}/run_summary.txt
   printf "%$width.${width}s\n" "$divider" >> ${OUTPUT_DIR}/run_summary.txt
 fi
 for i in `cat ${OUTPUT_DIR}/runlist.txt`;
